@@ -24,7 +24,7 @@ public class UserService {
     public User getUserByEmail(String email) throws UserNotFoundException {
 
         //TODO: read from db
-        TypedQuery<User> userTypedQuery = em.createQuery("select * from user u where u.email like :email", User.class);
+        TypedQuery<User> userTypedQuery = em.createQuery("select u from user u where u.email like :email", User.class);
         userTypedQuery.setParameter("email", email);
         if(userTypedQuery.getResultList() != null)
             return userTypedQuery.getResultList().get(1);

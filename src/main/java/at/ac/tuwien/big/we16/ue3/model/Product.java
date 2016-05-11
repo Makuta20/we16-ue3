@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@NamedQuery(name = "getAllProducts", query = "select p from Product p")
 @Entity
 public class Product extends BaseEntity{
 
