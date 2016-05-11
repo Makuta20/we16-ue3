@@ -4,11 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-public class User {
-
-    @Id
-    private String id;
-
+public class User extends BaseEntity{
 
     private String salutation;
     private String firstname;

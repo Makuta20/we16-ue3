@@ -9,10 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-public class Product {
-
-    @Id
-    private String id;
+public class Product extends BaseEntity{
 
     private String name;
     private String image;
@@ -80,14 +77,6 @@ public class Product {
             }
         }
         return false;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getName() {

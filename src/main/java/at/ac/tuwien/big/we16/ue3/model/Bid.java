@@ -5,17 +5,12 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Bid {
-
-    @Id
-    private String id;
+public class Bid extends BaseEntity{
 
     private int amount;
 
     @ManyToOne
     private User user;
-
-    //Pula mea in gura lor
 
     @ManyToOne
     private Product product;
@@ -23,14 +18,6 @@ public class Bid {
     public Bid(int centAmount, User user) {
         amount = centAmount;
         this.user = user;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public int getAmount() {
