@@ -5,22 +5,28 @@ import at.ac.tuwien.big.we16.ue3.model.Bid;
 import at.ac.tuwien.big.we16.ue3.model.Product;
 import at.ac.tuwien.big.we16.ue3.model.User;
 
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.Collection;
 
 public class ProductService {
 
+    @PersistenceContext(unitName = "ProductService")
+    EntityManager em ;
+
+
     public Collection<Product> getAllProducts() {
-
-        //TODO: read from db
-
-        return null;
+        return em.createNamedQuery("getAllProducts", Product.class).getResultList();
     }
 
-    public Product getProductById(String id) throws ProductNotFoundException {
-
-       //TODO: read from db
-
+    public Product getProductById(long id) throws ProductNotFoundException {
+        TypedQuery<Product> productTypedQuery = em.createQuery("select p from product p where p.id like :id", Product.class);
+        productTypedQuery.setParameter("id", id);
+        if(productTypedQuery.getResultList() != null)
+            return productTypedQuery.getResultList().get(1);
         return null;
     }
 
