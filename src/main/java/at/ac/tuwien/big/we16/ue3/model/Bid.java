@@ -15,6 +15,8 @@ public class Bid {
     @ManyToOne
     private User user;
 
+    //Pula mea in gura lor
+
     @ManyToOne
     private Product product;
 
