@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 @Entity
 public class Product extends BaseEntity{
 
+    //bag pula
     private String name;
     private String image;
     private String imageAlt;
