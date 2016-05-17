@@ -6,9 +6,18 @@ import at.ac.tuwien.big.we16.ue3.model.Bid;
 import at.ac.tuwien.big.we16.ue3.model.Product;
 import at.ac.tuwien.big.we16.ue3.model.User;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 
 public class BidService {
+
+    EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
+
+    @PersistenceContext(unitName = "BidService")
+    EntityManager em = entityManagerFactory.createEntityManager();
 
     public void makeBid(User user, Product product, int centAmount) throws InvalidBidException, UserNotFoundException {
         if (product.hasAuctionEnded() || !product.isValidBidAmount(centAmount) || !user.hasSufficientBalance(centAmount)) {
@@ -27,7 +36,9 @@ public class BidService {
 
 
         int decreaseAmount = centAmount;
-        User highestBidder = null;
+        User highestBidder = em.find(User.class, product.getHighestBid().getUser().getId());
+        User user1 = em.find(User.class, user.getId());
+        //Product product1 = em.find(Product.class, product.getId());
 
         if (product.hasBids()) {
             if (product.getHighestBid().isBy(user)) {
@@ -36,18 +47,26 @@ public class BidService {
             }
             else {
                 // TODO reimburse current highest bidder
+                highestBidder.increaseBalance(product.getHighestBid().getAmount());
+
                 ServiceFactory.getNotifierService().notifyReimbursement(highestBidder);
             }
         }
 
         if (!product.hasBidByUser(user)) {
-            user.incrementRunningAuctions();
+            user1.incrementRunningAuctions();
         }
 
-        user.decreaseBalance(decreaseAmount);
-        Bid bid = new Bid(centAmount, user);
+        user1.decreaseBalance(decreaseAmount);
+        Bid bid = new Bid(centAmount, user1);
 
-        //TODO: write to db
+        //TODO write to db
+
+        em.getTransaction().begin();
+        em.persist(bid);
+        em.getTransaction().commit();
+
+        closeRessources();
 
         ServiceFactory.getNotifierService().notifyAllAboutBid(bid);
     }
@@ -59,5 +78,10 @@ public class BidService {
         } catch (ArithmeticException e) {
             throw new InvalidBidException();
         }
+    }
+
+    private void closeRessources(){
+        em.close();
+        entityManagerFactory.close();
     }
 }

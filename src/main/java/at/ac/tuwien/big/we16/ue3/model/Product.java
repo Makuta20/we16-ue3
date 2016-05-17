@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @Entity
 public class Product extends BaseEntity{
 
-    //bag pula
+
     private String name;
     private String image;
     private String imageAlt;
@@ -21,7 +21,9 @@ public class Product extends BaseEntity{
     @Temporal(TemporalType.DATE)
     private Date auctionEnd;
 
+    @Transient
     private ProductType type;
+
     private int year;
     private String producer;
     private boolean expired;
@@ -97,6 +99,10 @@ public class Product extends BaseEntity{
         return auctionEnd;
     }
 
+    public String getProducer() {
+        return producer;
+    }
+
     public ProductType getType() {
         return type;
     }
@@ -109,4 +115,30 @@ public class Product extends BaseEntity{
         return relatedProducts;
     }
 
+
+
+    //Setters
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public void setImageAlt(String imageAlt) {
+        this.imageAlt = imageAlt;
+    }
+
+    public void setAuctionEnd(Date auctionEnd) {
+        this.auctionEnd = auctionEnd;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public void setProducer(String producer) {
+        this.producer = producer;
+    }
 }
