@@ -15,6 +15,10 @@ public class RelatedProduct extends BaseEntity{
         return name;
     }
 
+    public void setName(String name){
+        this.name = name;
+    }
+
     public Product getProduct() {
         return product;
     }

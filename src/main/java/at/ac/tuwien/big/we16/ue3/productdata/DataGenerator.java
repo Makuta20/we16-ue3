@@ -6,6 +6,7 @@ import at.ac.tuwien.big.we.dbpedia.vocabulary.DBPedia;
 import at.ac.tuwien.big.we.dbpedia.vocabulary.DBPediaOWL;
 import at.ac.tuwien.big.we16.ue3.model.Product;
 import at.ac.tuwien.big.we16.ue3.model.ProductType;
+import at.ac.tuwien.big.we16.ue3.model.RelatedProduct;
 import at.ac.tuwien.big.we16.ue3.model.User;
 import at.ac.tuwien.big.we16.ue3.service.AuthService;
 import at.ac.tuwien.big.we16.ue3.service.ProductService;
@@ -115,9 +116,13 @@ public class DataGenerator {
             Model relatedProducts = DBPediaService.loadStatements(query.toQueryString());
 
             List<String> englishRelatedProducts = DBPediaService.getResourceNames(relatedProducts, Locale.ENGLISH);
-            List<String> germanRelatedProducts = DBPediaService.getResourceNames(relatedProducts, Locale.GERMAN);
+            //List<String> germanRelatedProducts = DBPediaService.getResourceNames(relatedProducts, Locale.GERMAN);
 
-
+            for(String s : englishRelatedProducts){
+                RelatedProduct relatedProduct = new RelatedProduct();
+                relatedProduct.setName(s);
+                relatedProduct.setProduct(p);
+            }
         }
     }
 }
