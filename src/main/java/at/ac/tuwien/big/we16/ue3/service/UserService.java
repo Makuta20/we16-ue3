@@ -18,28 +18,60 @@ public class UserService {
 
         //TODO: write to db
         // ???
-        em.getTransaction().begin();
-        em.persist(user);
-        em.getTransaction().commit();
 
-        closeRessources();
+        try{
+            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
+            EntityManager em = entityManagerFactory.createEntityManager();
+
+            try {
+                em.getTransaction().begin();
+                em.persist(user);
+                em.getTransaction().commit();
+            }catch (Exception e){
+                if(em.getTransaction().isActive()){
+                    em.getTransaction().rollback();
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            closeRessources();
+        }
     }
 
     public User getUserByEmail(String email) throws UserNotFoundException {
 
         //TODO: read from db
         // ???
-        em.getTransaction().begin();
-        TypedQuery<User> userTypedQuery = em.createQuery("select u from user u where u.email like :email", User.class);
-        userTypedQuery.setParameter("email", email);
-        em.getTransaction().commit();
-
         User user = null;
 
-        if(userTypedQuery.getResultList().size() > 0)
-            user = userTypedQuery.getResultList().get(1);
+        try{
+            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
+            EntityManager em = entityManagerFactory.createEntityManager();
 
-        closeRessources();
+            try {
+                em.getTransaction().begin();
+                TypedQuery<User> userTypedQuery = em.createQuery("select u from user u where u.email like :email", User.class);
+                userTypedQuery.setParameter("email", email);
+                em.getTransaction().commit();
+
+                if(userTypedQuery.getResultList().size() > 0)
+                    user = userTypedQuery.getResultList().get(1);
+                else
+                    throw new UserNotFoundException();
+
+            }catch (Exception e){
+                if(em.getTransaction().isActive()){
+                    em.getTransaction().rollback();
+                }
+            }
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            closeRessources();
+        }
 
         return user;
     }

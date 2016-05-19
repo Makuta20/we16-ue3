@@ -21,22 +21,55 @@ public class ProductService {
 
     public Collection<Product> getAllProducts() {
 
-        em.getTransaction().begin();
-        List<Product> products = em.createNamedQuery("getAllProducts", Product.class).getResultList();
-        em.getTransaction().commit();
+        List<Product> products = null;
 
-        closeRessources();
+        try{
+            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
+            EntityManager em = entityManagerFactory.createEntityManager();
+
+            try {
+                em.getTransaction().begin();
+                products = em.createNamedQuery("getAllProducts", Product.class).getResultList();
+                em.getTransaction().commit();
+
+            }catch (Exception e){
+                if(em.getTransaction().isActive()){
+                    em.getTransaction().rollback();
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            closeRessources();
+        }
 
 
         return products;
     }
 
     public Product getProductById(String id) throws ProductNotFoundException {
-        em.getTransaction().begin();
-        Product product = em.find(Product.class, id);
-        em.getTransaction().commit();
 
-        closeRessources();
+        Product product = null;
+
+        try{
+            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
+            EntityManager em = entityManagerFactory.createEntityManager();
+
+            try {
+                em.getTransaction().begin();
+                product = em.find(Product.class, id);
+                em.getTransaction().commit();
+
+            }catch (Exception e){
+                if(em.getTransaction().isActive()){
+                    em.getTransaction().rollback();
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            closeRessources();
+        }
 
         return product;
     }
@@ -46,44 +79,75 @@ public class ProductService {
     public Collection<Product> checkProductsForExpiration() {
         Collection<Product> newlyExpiredProducts = new ArrayList<>();
         for (Product product : this.getAllProducts()) {
+            try {
+                EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
+                EntityManager em = entityManagerFactory.createEntityManager();
 
-            em.getTransaction().begin();
-            Product product1 = em.find(Product.class, product.getId());
+                try {
+                    em.getTransaction().begin();
+                    Product product1 = em.find(Product.class, product.getId());
 
-            if (!product.hasExpired() && product.hasAuctionEnded()) {
-                product.setExpired();
-                newlyExpiredProducts.add(product);
-                if (product.hasBids()) {
-                    Bid highestBid = product.getHighestBid();
-                    for (User user : product.getUsers()) {
+                    if (!product.hasExpired() && product.hasAuctionEnded()) {
+                        product.setExpired();
+                        newlyExpiredProducts.add(product);
+                        if (product.hasBids()) {
+                            Bid highestBid = product.getHighestBid();
+                            for (User user : product.getUsers()) {
 
-                        //em.getTransaction().begin();
-                        User user1 = em.find(User.class, user.getId());
+                                //em.getTransaction().begin();
+                                User user1 = em.find(User.class, user.getId());
 
-                        user1.decrementRunningAuctions();
-                        if (highestBid.isBy(user1)) {
-                            user1.incrementWonAuctionsCount();
+                                user1.decrementRunningAuctions();
+                                if (highestBid.isBy(user1)) {
+                                    user1.incrementWonAuctionsCount();
+                                } else {
+                                    user1.incrementLostAuctionsCount();
+                                }
+                                //em.getTransaction().commit();
+                            }
                         }
-                        else {
-                            user1.incrementLostAuctionsCount();
-                        }
-                        //em.getTransaction().commit();
+                    }
+                    //update product
+                    em.getTransaction().commit();
+
+
+                } catch (Exception e) {
+                    if (em.getTransaction().isActive()) {
+                        em.getTransaction().rollback();
                     }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                closeRessources();
             }
-            //update product
-            em.getTransaction().commit();
         }
 
-        closeRessources();
 
         return newlyExpiredProducts;
     }
 
     public void createProduct(Product p){
-        em.getTransaction().begin();
-        em.persist(p);
-        em.getTransaction().commit();
+
+        try{
+            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
+            EntityManager em = entityManagerFactory.createEntityManager();
+            try {
+                em.getTransaction().begin();
+                em.persist(p);
+                em.getTransaction().commit();
+            }catch (Exception e){
+                if(em.getTransaction().isActive()){
+                    em.getTransaction().rollback();
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            closeRessources();
+        }
+
+
 
         closeRessources();
     }

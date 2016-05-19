@@ -66,9 +66,11 @@ public class BidService {
         em.persist(bid);
         em.getTransaction().commit();
 
-        closeRessources();
+
 
         ServiceFactory.getNotifierService().notifyAllAboutBid(bid);
+
+        closeRessources();
     }
 
     public void makeBid(User user, Product product, BigDecimal amount) throws InvalidBidException, UserNotFoundException {
