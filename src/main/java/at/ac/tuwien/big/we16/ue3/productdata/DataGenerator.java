@@ -7,16 +7,12 @@ import at.ac.tuwien.big.we.dbpedia.vocabulary.DBPediaOWL;
 import at.ac.tuwien.big.we16.ue3.model.Product;
 import at.ac.tuwien.big.we16.ue3.model.ProductType;
 import at.ac.tuwien.big.we16.ue3.model.RelatedProduct;
-import at.ac.tuwien.big.we16.ue3.model.User;
-import at.ac.tuwien.big.we16.ue3.service.AuthService;
-import at.ac.tuwien.big.we16.ue3.service.ProductService;
+import at.ac.tuwien.big.we16.ue3.service.*;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
-import org.h2.engine.Session;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,9 +26,12 @@ public class DataGenerator {
 
     private void generateUserData() {
         // TODO add the computer user to the database
+
+
     }
 
-    private ProductService productService = new ProductService();
+    private ProductService productService = ServiceFactory.getProductService();
+
     private void generateProductData() {
 
         // TODO load products via JSONDataLoader and write them to the database
@@ -89,6 +88,7 @@ public class DataGenerator {
 
 
         // TODO verify and complete (review) code for loading Products from dbpedia
+        // ???
         if(!DBPediaService.isAvailable())
             return;
 

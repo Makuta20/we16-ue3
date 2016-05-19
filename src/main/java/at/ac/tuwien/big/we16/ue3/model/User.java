@@ -105,4 +105,24 @@ public class User extends BaseEntity{
         return lastname;
     }
 
+
+    public void setSalutation(String salutation) {
+        this.salutation = salutation;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setBalance(int balance) {
+        this.balance = balance;
+    }
 }
