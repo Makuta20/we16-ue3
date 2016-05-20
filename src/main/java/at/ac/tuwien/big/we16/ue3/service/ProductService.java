@@ -13,19 +13,24 @@ import java.util.List;
 
 public class ProductService {
 
+    /*
     EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
 
     @PersistenceContext(unitName = "ProductService")
     EntityManager em = entityManagerFactory.createEntityManager();
+    */
 
 
     public Collection<Product> getAllProducts() {
 
         List<Product> products = null;
 
+        EntityManagerFactory entityManagerFactory = null;
+        EntityManager em = null;
+
         try{
-            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
-            EntityManager em = entityManagerFactory.createEntityManager();
+            entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
+            em = entityManagerFactory.createEntityManager();
 
             try {
                 em.getTransaction().begin();
@@ -40,7 +45,11 @@ public class ProductService {
         }catch (Exception e){
             e.printStackTrace();
         }finally {
-            closeRessources();
+            if(em != null)
+                em.close();
+
+            if(entityManagerFactory != null)
+                entityManagerFactory.close();
         }
 
 
@@ -51,9 +60,12 @@ public class ProductService {
 
         Product product = null;
 
+        EntityManagerFactory entityManagerFactory = null;
+        EntityManager em = null;
+
         try{
-            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
-            EntityManager em = entityManagerFactory.createEntityManager();
+            entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
+            em = entityManagerFactory.createEntityManager();
 
             try {
                 em.getTransaction().begin();
@@ -68,7 +80,11 @@ public class ProductService {
         }catch (Exception e){
             e.printStackTrace();
         }finally {
-            closeRessources();
+            if(em != null)
+                em.close();
+
+            if(entityManagerFactory != null)
+                entityManagerFactory.close();
         }
 
         return product;
@@ -78,10 +94,12 @@ public class ProductService {
     // ????
     public Collection<Product> checkProductsForExpiration() {
         Collection<Product> newlyExpiredProducts = new ArrayList<>();
+        EntityManagerFactory entityManagerFactory = null;
+        EntityManager em = null;
         for (Product product : this.getAllProducts()) {
             try {
-                EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
-                EntityManager em = entityManagerFactory.createEntityManager();
+                entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
+                em = entityManagerFactory.createEntityManager();
 
                 try {
                     em.getTransaction().begin();
@@ -119,7 +137,11 @@ public class ProductService {
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                closeRessources();
+                if(em != null)
+                    em.close();
+
+                if(entityManagerFactory != null)
+                    entityManagerFactory.close();
             }
         }
 
@@ -129,9 +151,12 @@ public class ProductService {
 
     public void createProduct(Product p){
 
+        EntityManagerFactory entityManagerFactory = null;
+        EntityManager em = null;
+
         try{
-            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
-            EntityManager em = entityManagerFactory.createEntityManager();
+            entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
+            em = entityManagerFactory.createEntityManager();
             try {
                 em.getTransaction().begin();
                 em.persist(p);
@@ -144,16 +169,12 @@ public class ProductService {
         }catch (Exception e){
             e.printStackTrace();
         }finally {
-            closeRessources();
+            if(em != null)
+                em.close();
+
+            if(entityManagerFactory != null)
+                entityManagerFactory.close();
         }
-
-
-
-        closeRessources();
     }
 
-    private void closeRessources(){
-        em.close();
-        entityManagerFactory.close();
-    }
 }

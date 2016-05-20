@@ -14,10 +14,7 @@ import java.math.BigDecimal;
 
 public class BidService {
 
-    EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
 
-    @PersistenceContext(unitName = "BidService")
-    EntityManager em = entityManagerFactory.createEntityManager();
 
     public void makeBid(User user, Product product, int centAmount) throws InvalidBidException, UserNotFoundException {
         if (product.hasAuctionEnded() || !product.isValidBidAmount(centAmount) || !user.hasSufficientBalance(centAmount)) {
@@ -34,43 +31,80 @@ public class BidService {
         // * product has bids, but none by the user
         //   -> decrease balance by total, increment running, reimburse the current highest bidder
 
+        EntityManagerFactory entityManagerFactory = null;
+        EntityManager em = null;
 
-        int decreaseAmount = centAmount;
-        User highestBidder = em.find(User.class, product.getHighestBid().getUser().getId());
-        User user1 = em.find(User.class, user.getId());
-        //Product product1 = em.find(Product.class, product.getId());
-
-        if (product.hasBids()) {
-            if (product.getHighestBid().isBy(user)) {
-                // The given user already is the highest bidder, so we only substract the difference.
-                decreaseAmount = centAmount - product.getHighestBid().getAmount();
-            }
-            else {
-                // TODO reimburse current highest bidder
-                highestBidder.increaseBalance(product.getHighestBid().getAmount());
-
-                ServiceFactory.getNotifierService().notifyReimbursement(highestBidder);
-            }
-        }
-
-        if (!product.hasBidByUser(user)) {
-            user1.incrementRunningAuctions();
-        }
-
-        user1.decreaseBalance(decreaseAmount);
-        Bid bid = new Bid(centAmount, user1);
+        Bid bid = null;
 
         //TODO write to db
 
-        em.getTransaction().begin();
-        em.persist(bid);
-        em.getTransaction().commit();
 
 
+        try{
+            entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
+            em = entityManagerFactory.createEntityManager();
+
+            int decreaseAmount = centAmount;
+
+
+
+
+            //Product product1 = em.find(Product.class, product.getId());
+            User highestBidder = null;
+            User user1 = null;
+
+            try {
+                highestBidder = em.find(User.class, product.getHighestBid().getUser().getId());
+                user1 = em.find(User.class, user.getId());
+
+            }catch (Exception e){
+                if(em.getTransaction().isActive()){
+                    em.getTransaction().rollback();
+                }
+            }
+
+            if (product.hasBids()) {
+                if (product.getHighestBid().isBy(user)) {
+                    // The given user already is the highest bidder, so we only substract the difference.
+                    decreaseAmount = centAmount - product.getHighestBid().getAmount();
+                }
+                else {
+                    // TODO reimburse current highest bidder
+                    highestBidder.increaseBalance(product.getHighestBid().getAmount());
+
+                    ServiceFactory.getNotifierService().notifyReimbursement(highestBidder);
+                }
+            }
+
+            if (!product.hasBidByUser(user)) {
+                user1.incrementRunningAuctions();
+            }
+
+            user1.decreaseBalance(decreaseAmount);
+            bid = new Bid(centAmount, user1);
+
+            try {
+                em.getTransaction().begin();
+                em.persist(bid);
+                em.getTransaction().commit();
+            }catch (Exception e){
+                if(em.getTransaction().isActive()){
+                    em.getTransaction().rollback();
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            if(em != null)
+                em.close();
+
+            if(entityManagerFactory != null)
+                entityManagerFactory.close();
+        }
 
         ServiceFactory.getNotifierService().notifyAllAboutBid(bid);
 
-        closeRessources();
     }
 
     public void makeBid(User user, Product product, BigDecimal amount) throws InvalidBidException, UserNotFoundException {
@@ -80,10 +114,5 @@ public class BidService {
         } catch (ArithmeticException e) {
             throw new InvalidBidException();
         }
-    }
-
-    private void closeRessources(){
-        em.close();
-        entityManagerFactory.close();
     }
 }

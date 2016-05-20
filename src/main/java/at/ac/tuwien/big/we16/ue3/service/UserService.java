@@ -9,19 +9,23 @@ import java.util.List;
 
 public class UserService {
 
+    /*
     EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
 
     @PersistenceContext(unitName = "UserService")
     EntityManager em = entityManagerFactory.createEntityManager();
+    */
 
     public void createUser(User user) {
 
         //TODO: write to db
         // ???
+        EntityManagerFactory entityManagerFactory = null;
+        EntityManager em = null;
 
         try{
-            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
-            EntityManager em = entityManagerFactory.createEntityManager();
+            entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
+            em = entityManagerFactory.createEntityManager();
 
             try {
                 em.getTransaction().begin();
@@ -35,7 +39,11 @@ public class UserService {
         }catch (Exception e){
             e.printStackTrace();
         }finally {
-            closeRessources();
+            if(em != null)
+                em.close();
+
+            if(entityManagerFactory != null)
+                entityManagerFactory.close();
         }
     }
 
@@ -45,9 +53,12 @@ public class UserService {
         // ???
         User user = null;
 
+        EntityManagerFactory entityManagerFactory = null;
+        EntityManager em = null;
+
         try{
-            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
-            EntityManager em = entityManagerFactory.createEntityManager();
+            entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
+            em = entityManagerFactory.createEntityManager();
 
             try {
                 em.getTransaction().begin();
@@ -70,15 +81,14 @@ public class UserService {
         }catch (Exception e){
             e.printStackTrace();
         }finally {
-            closeRessources();
+            if(em != null)
+                em.close();
+
+            if(entityManagerFactory != null)
+                entityManagerFactory.close();
         }
 
         return user;
-    }
-
-    private void closeRessources(){
-        em.close();
-        entityManagerFactory.close();
     }
 
 }
