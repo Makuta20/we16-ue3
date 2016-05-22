@@ -51,7 +51,7 @@ public class UserService {
 
         //TODO: read from db
         // ???
-        User user = null;
+        User user = new User();
 
         EntityManagerFactory entityManagerFactory = null;
         EntityManager em = null;
@@ -62,7 +62,7 @@ public class UserService {
 
             try {
                 em.getTransaction().begin();
-                TypedQuery<User> userTypedQuery = em.createQuery("select u from user u where u.email like :email", User.class);
+                TypedQuery<User> userTypedQuery = em.createQuery("select u from User u where u.email like :email", User.class);
                 userTypedQuery.setParameter("email", email);
                 em.getTransaction().commit();
 

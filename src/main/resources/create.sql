@@ -5,12 +5,12 @@ drop table if exists RelatedProduct;
 
 create table User
 (
-  id long PRIMARY KEY,
+  id VARCHAR(10) PRIMARY KEY,
   salutation varchar(10),
   firstname varchar(20),
   lastname varchar(20),
   email varchar(150),
-  password varchar(30),
+  password varchar(8),
   dateOfBirth date,
   wonAuctionsCount int,
   lostAuctionsCount int,
@@ -20,7 +20,7 @@ create table User
 
 create table Product
 (
-  id long primary key,
+  id VARCHAR(10) primary key,
   name varchar(100),
   year int,
   producer varchar(100),
@@ -32,15 +32,15 @@ create table Product
 
 create table Bid
 (
-  id long primary key,
-  product long references Product(id),
-  user long references User(id),
+  id VARCHAR(10) primary key,
+  product VARCHAR(10) references Product(id),
+  user VARCHAR(10) references User(id),
   amount int
 );
 
 create table RelatedProduct
 (
-  id long primary key,
-  product long references Product(id),
+  id VARCHAR(10) primary key,
+  product VARCHAR(10) references Product(id),
   nameDe varchar(255)
 );

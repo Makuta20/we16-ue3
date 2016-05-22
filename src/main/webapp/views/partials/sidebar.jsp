@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <fmt:setBundle basename="messages" />
-<jsp:useBean id="user" scope="request" type="at.ac.tuwien.big.we16.ue3.model.User" />
+<jsp:useBean id="user" scope="session" type="at.ac.tuwien.big.we16.ue3.model.User" />
 <aside class="sidebar" aria-labelledby="userinfoheadline">
   <div class="user-info-container">
     <h2 class="accessibility" id="userinfoheadline">Benutzerdaten</h2>

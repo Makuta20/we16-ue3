@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <jsp:useBean id="products" scope="request" type="java.util.Collection<at.ac.tuwien.big.we16.ue3.model.Product>" />
-<jsp:useBean id="user" scope="request" type="at.ac.tuwien.big.we16.ue3.model.User" />
+<jsp:useBean id="user" scope="session" type="at.ac.tuwien.big.we16.ue3.model.User" />
 <fmt:setBundle basename="messages" />
 <jsp:include page='partials/header.jsp'>
     <jsp:param name="title" value="Produkte" />

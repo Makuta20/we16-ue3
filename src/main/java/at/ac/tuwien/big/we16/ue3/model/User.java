@@ -15,7 +15,7 @@ public class User extends BaseEntity{
 
     private String password;
 
-    @Column(name = "date")
+    @Column(name = "dateofbirth")
     @Temporal(TemporalType.DATE)
     private Date date;
 
@@ -104,7 +104,6 @@ public class User extends BaseEntity{
     public String getLastname() {
         return lastname;
     }
-
 
     public void setSalutation(String salutation) {
         this.salutation = salutation;

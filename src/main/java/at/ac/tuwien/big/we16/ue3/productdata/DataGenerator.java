@@ -7,12 +7,16 @@ import at.ac.tuwien.big.we.dbpedia.vocabulary.DBPediaOWL;
 import at.ac.tuwien.big.we16.ue3.model.Product;
 import at.ac.tuwien.big.we16.ue3.model.ProductType;
 import at.ac.tuwien.big.we16.ue3.model.RelatedProduct;
+import at.ac.tuwien.big.we16.ue3.model.User;
 import at.ac.tuwien.big.we16.ue3.service.*;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.vocabulary.RDF;
 import com.hp.hpl.jena.vocabulary.RDFS;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.util.List;
 import java.util.Locale;
 
@@ -24,10 +28,17 @@ public class DataGenerator {
         insertRelatedProducts();
     }
 
+    private UserService userService = ServiceFactory.getUserService();
+
     private void generateUserData() {
         // TODO add the computer user to the database
+        User robotUser = new User();
+        robotUser.setFirstname("Robot");
+        robotUser.setLastname("Big-Bid");
+        robotUser.setEmail("bigRobot@bigbid.eu");
+        robotUser.setPassword("bigRobot@bigbid.eu");
 
-
+        userService.createUser(robotUser);
     }
 
     private ProductService productService = ServiceFactory.getProductService();
@@ -118,10 +129,34 @@ public class DataGenerator {
             List<String> englishRelatedProducts = DBPediaService.getResourceNames(relatedProducts, Locale.ENGLISH);
             //List<String> germanRelatedProducts = DBPediaService.getResourceNames(relatedProducts, Locale.GERMAN);
 
-            for(String s : englishRelatedProducts){
-                RelatedProduct relatedProduct = new RelatedProduct();
-                relatedProduct.setName(s);
-                relatedProduct.setProduct(p);
+            EntityManagerFactory entityManagerFactory = null;
+            EntityManager em = null;
+
+            try{
+                entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
+                em = entityManagerFactory.createEntityManager();
+                try {
+                    for(String s : englishRelatedProducts){
+                        RelatedProduct relatedProduct = new RelatedProduct();
+                        relatedProduct.setName(s);
+                        relatedProduct.setProduct(p);
+                        em.getTransaction().begin();
+                        em.persist(relatedProduct);
+                        em.getTransaction().commit();
+                    }
+                }catch (Exception e){
+                    if(em.getTransaction().isActive()){
+                        em.getTransaction().rollback();
+                    }
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }finally {
+                if(em != null)
+                    em.close();
+
+                if(entityManagerFactory != null)
+                    entityManagerFactory.close();
             }
         }
     }

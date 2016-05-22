@@ -43,12 +43,11 @@ public class BigBidServlet extends HttpServlet {
         this.userController = new UserController(userService, this.authService);
         (new DataGenerator()).generateData();
         //TODO uncomment the following code and possibly change the email address
-//        try {
-//            
-//             ServiceFactory.getComputerUserService().start(userService.getUserByEmail("jane.doe@example.com"));
-//        } catch (UserNotFoundException e) {
-//            // ignore
-//        }
+        try {
+             ServiceFactory.getComputerUserService().start(userService.getUserByEmail("bigRobot@bigbid.eu"));
+        } catch (UserNotFoundException e) {
+            // ignore
+        }
     }
 
     @Override
