@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 @NamedQuery(name = "getAllProducts", query = "select p from Product p")
 @Entity
+@Table(name = "Product")
 public class Product extends BaseEntity{
 
 
@@ -17,7 +18,6 @@ public class Product extends BaseEntity{
     private String image;
     private String imageAlt;
 
-    @Column(name = "auctionEnd")
     @Temporal(TemporalType.DATE)
     private Date auctionEnd;
 
@@ -28,10 +28,10 @@ public class Product extends BaseEntity{
     private String producer;
     private boolean expired;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
+    @OneToMany(cascade = CascadeType.MERGE, mappedBy = "product")
     private List<RelatedProduct> relatedProducts;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product")
+    @OneToMany(cascade = CascadeType.MERGE, mappedBy = "product")
     private List<Bid> bids;
 
     public Bid getHighestBid() {

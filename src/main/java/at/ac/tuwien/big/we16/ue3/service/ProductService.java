@@ -157,13 +157,14 @@ public class ProductService {
         try{
             entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
             em = entityManagerFactory.createEntityManager();
+            EntityTransaction tempTrans = em.getTransaction();
             try {
-                em.getTransaction().begin();
+                tempTrans.begin();
                 em.persist(p);
-                em.getTransaction().commit();
+                tempTrans.commit();
             }catch (Exception e){
-                if(em.getTransaction().isActive()){
-                    em.getTransaction().rollback();
+                if(tempTrans.isActive()){
+                    tempTrans.rollback();
                 }
             }
         }catch (Exception e){

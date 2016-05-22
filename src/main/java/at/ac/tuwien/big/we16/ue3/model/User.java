@@ -4,20 +4,19 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
+@Table(name = "User")
 public class User extends BaseEntity{
 
     private String salutation;
     private String firstname;
     private String lastname;
 
-    @Column(name = "email", unique = true)
     private String email;
 
     private String password;
 
-    @Column(name = "dateofbirth")
     @Temporal(TemporalType.DATE)
-    private Date date;
+    private Date dateofbirth;
 
     private int balance;
     private int runningAuctionsCount;
@@ -90,11 +89,11 @@ public class User extends BaseEntity{
     }
 
     public Date getDate() {
-        return date;
+        return dateofbirth;
     }
 
     public void setDate(Date date) {
-        this.date = date;
+        this.dateofbirth = date;
     }
 
     public String getFirstname() {

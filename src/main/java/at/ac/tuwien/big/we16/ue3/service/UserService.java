@@ -26,14 +26,14 @@ public class UserService {
         try{
             entityManagerFactory = Persistence.createEntityManagerFactory("defaultPersistenceUnit");
             em = entityManagerFactory.createEntityManager();
-
+            EntityTransaction entityTransaction = em.getTransaction();
             try {
-                em.getTransaction().begin();
+                entityTransaction.begin();
                 em.persist(user);
-                em.getTransaction().commit();
+                entityTransaction.commit();
             }catch (Exception e){
-                if(em.getTransaction().isActive()){
-                    em.getTransaction().rollback();
+                if(entityTransaction.isActive()){
+                    entityTransaction.rollback();
                 }
             }
         }catch (Exception e){

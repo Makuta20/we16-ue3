@@ -3,9 +3,15 @@ package at.ac.tuwien.big.we16.ue3.model;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="Bid")
 public class Bid extends BaseEntity{
+
+    public Bid(){
+
+    }
 
     private int amount;
 
